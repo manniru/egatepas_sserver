@@ -1,2 +1,0 @@
-# egatepass
-Created with CodeSandbox
