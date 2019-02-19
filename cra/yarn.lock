@@ -2345,6 +2345,10 @@ console-control-strings@^1.0.0, console-control-strings@~1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/console-control-strings/-/console-control-strings-1.1.0.tgz#3d7cf4464db6446ea644bf4b39507f9851008e8e"
 
+console-log-div@^0.6.3:
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/console-log-div/-/console-log-div-0.6.3.tgz#0862720caa725340e05cb4488ce8cef5ff20a00a"
+
 constants-browserify@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/constants-browserify/-/constants-browserify-1.0.0.tgz#c20b96d8c617748aaf1c16021760cd27fcb8cb75"
@@ -7182,7 +7186,7 @@ prompts@^0.1.9:
     kleur "^2.0.1"
     sisteransi "^0.1.1"
 
-prop-types@^15.6.0, prop-types@^15.6.1:
+prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.1:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   dependencies:
@@ -7502,6 +7506,12 @@ react-transition-group@^2.2.1:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
     react-lifecycles-compat "^3.0.4"
+
+react-webcam@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/react-webcam/-/react-webcam-1.1.0.tgz#81214365da997717ebe7dac281e18ae8b50ee413"
+  dependencies:
+    prop-types "^15.5.8"
 
 react@^16.8.2:
   version "16.8.2"

@@ -18,12 +18,11 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MailIcon from "@material-ui/icons/Mail";
-import Demo1 from "./Demo1";
-// import WebcamCapture from "./WebcamCapture";
+import BUKApp from "./BUKApp";
+import WebcamCapture from "./WebcamCapture";
 // import Dashboard from "../ros/components/Dashboard.jsx";
 
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import Camera from "./Camera";
 
 const drawerWidth = 240;
 
@@ -98,7 +97,7 @@ class AppBarDrawer extends React.Component {
   };
 
   render() {
-    const { classes, theme, online, noun, verb } = this.props;
+    const { classes, theme } = this.props;
     const { open } = this.state;
 
     return (
@@ -121,9 +120,8 @@ class AppBarDrawer extends React.Component {
                 <MenuIcon />
               </IconButton>
               <Typography variant="h6" color="inherit" noWrap>
-                Mannir Security Realtime eGatePass System: 
-                <em id="online">{` ${online} ${noun} ${verb} online.`}</em>
-
+                Civil Defence, Immigration and Prisons Services Board (CDIPB) -
+                Realtime Database
               </Typography>
             </Toolbar>
           </AppBar>
@@ -174,15 +172,6 @@ class AppBarDrawer extends React.Component {
                 </ListItem>
               </Link>
 
-              <Link to="demo" style={{ textDecoration: "none" }}>
-                <ListItem button>
-                  <ListItemIcon>
-                    <MailIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={"Demo"} />
-                </ListItem>
-              </Link>
-
               {["Send email", "Drafts"].map((text, index) => (
                 <ListItem button key={text}>
                   <ListItemIcon>
@@ -211,27 +200,12 @@ class AppBarDrawer extends React.Component {
             })}
           >
             <div className={classes.drawerHeader} />
-            <Route exact path="/" component={Camera} />
-            <Route path="/dashboard" component={Demo1} />
-            <Route path="/profile" component={Demo1} />
-            {/**<WebcamCapture /> */}
 
-            <Route
-            exact
-            path="/demo"
-            render={props => (
-              <Demo1
-                {...props}
-                onUserUpdated={this.props.handleUserUpdated}
-                onUserDeleted={this.props.handleUserDeleted}
-                users={this.props.users}
-                server={this.props.server}
-                socket={this.props.socket}
-                online={this.props.online}
-              />
-            )}
-          />
+            <Route exact path="/" component={BUKApp} />
+            <Route path="/dashboard" component={BUKApp} />
+            <Route path="/profile" component={BUKApp} />
 
+            <WebcamCapture />
           </main>
         </div>
       </Router>

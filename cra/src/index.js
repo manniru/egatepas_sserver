@@ -1,7 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './mannir/egatepass/EGatePassApp';
+// import App from './mannir/egatepass/EGatePassApp';
+// import App from './mannir/buk/BUKApp';
+// import App from './mannir/egatepass/WebcamCapture';
+// import App from './mannir/egatepass/Webcam';
+import App from './mannir/egatepass/MannirCam';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(<App />, document.getElementById('root'));

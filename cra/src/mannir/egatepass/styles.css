@@ -1,0 +1,40 @@
+.App {
+    font-family: sans-serif;
+    text-align: center;
+  }
+  
+  .visuals {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transform: scaleX(-1);
+    pointer-events: none;
+  }
+  
+  .video,
+  .photos,
+  .photo,
+  .effects,
+  #canvas {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .video {
+    opacity: 0.8;
+  }
+  
+  .photos,
+  .photo {
+    mix-blend-mode: darken;
+  }
+  
+  #canvas {
+    height: 480px;
+    width: 640px;
+  }
+  

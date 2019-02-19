@@ -24,3 +24,5 @@ yarn-error.log*
 
 # 13131
 /cra/node_modules
+/cra/build
+/build
