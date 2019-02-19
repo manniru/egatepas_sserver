@@ -1,23 +1,36 @@
 {
   "name": "egatepass",
   "version": "1.0.0",
-  "description": "",
-  "keywords": [],
+  "description": "Mannir eGatePass System",
   "main": "src/index.js",
-  "dependencies": {
-    "@material-ui/core": "3.9.1",
-    "@material-ui/icons": "3.0.2",
-    "react": "16.7.0",
-    "react-dom": "16.7.0",
-    "react-router-dom": "4.3.1",
-    "react-scripts": "2.1.3"
-  },
-  "devDependencies": {},
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "start": "CORS=1 node src/index",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "browserslist": [">0.2%", "not dead", "not ie <= 11", "not op_mini all"]
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/manniru/egatepass.git"
+  },
+  "keywords": [
+    "MERN",
+    "ReactJS",
+    "Realtime"
+  ],
+  "author": "Muhammad Mannir Ahmad",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/manniru/egatepass/issues"
+  },
+  "homepage": "https://github.com/manniru/egatepass#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "express-rate-limit": "^3.3.2",
+    "mongoose": "^5.4.13",
+    "mongoose-unique-validator": "^2.0.2",
+    "mongoose-validator": "^2.1.0",
+    "socket.io": "^2.2.0",
+    "string-capitalize-name": "^1.0.3"
+  }
 }
