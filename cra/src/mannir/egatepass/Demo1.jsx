@@ -1,7 +1,12 @@
 import React from "react";
 
-function Demo1() {
-  return <div>Demo1</div>;
+export default class Demo1 extends React.Component {
+  render() {
+    return (
+      <div>
+        <h1>Demo1: {+new Date()}</h1>
+        <h2>Online : {this.props.online}</h2>
+      </div>
+    );
+  }
 }
-
-export default Demo1;

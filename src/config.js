@@ -1,5 +1,6 @@
 
 module.exports = {
-    db: 'mongodb://localhost/egatepass' //process.env.DB
+    db: 'mongodb://localhost/egatepass' //process.env.DB,
+    
   };
   

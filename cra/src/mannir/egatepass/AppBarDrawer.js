@@ -97,7 +97,7 @@ class AppBarDrawer extends React.Component {
   };
 
   render() {
-    const { classes, theme } = this.props;
+    const { classes, theme, online, noun, verb } = this.props;
     const { open } = this.state;
 
     return (
@@ -120,7 +120,9 @@ class AppBarDrawer extends React.Component {
                 <MenuIcon />
               </IconButton>
               <Typography variant="h6" color="inherit" noWrap>
-                Mannir Security Realtime eGatePass System
+                Mannir Security Realtime eGatePass System: 
+                <em id="online">{` ${online} ${noun} ${verb} online.`}</em>
+
               </Typography>
             </Toolbar>
           </AppBar>
@@ -171,6 +173,15 @@ class AppBarDrawer extends React.Component {
                 </ListItem>
               </Link>
 
+              <Link to="demo" style={{ textDecoration: "none" }}>
+                <ListItem button>
+                  <ListItemIcon>
+                    <MailIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={"Demo"} />
+                </ListItem>
+              </Link>
+
               {["Send email", "Drafts"].map((text, index) => (
                 <ListItem button key={text}>
                   <ListItemIcon>
@@ -203,6 +214,23 @@ class AppBarDrawer extends React.Component {
             <Route path="/dashboard" component={Demo1} />
             <Route path="/profile" component={Demo1} />
             {/**<WebcamCapture /> */}
+
+            <Route
+            exact
+            path="/demo"
+            render={props => (
+              <Demo1
+                {...props}
+                onUserUpdated={this.props.handleUserUpdated}
+                onUserDeleted={this.props.handleUserDeleted}
+                users={this.props.users}
+                server={this.props.server}
+                socket={this.props.socket}
+                online={this.props.online}
+              />
+            )}
+          />
+
           </main>
         </div>
       </Router>
