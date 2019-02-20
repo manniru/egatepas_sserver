@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './Console.css';
+import './console.css';
 import 'console-log-div';
 
 const styles = {

@@ -14,6 +14,9 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import CameraAlt from '@material-ui/icons/CameraAlt';
 import CameraRear from '@material-ui/icons/CameraRear';
 import SpeakerPhone from '@material-ui/icons/SpeakerPhone';
+// import console from '../console/console'
+import 'console-log-div';
+import '../console/console.css'
 // import Toggle1 from './Toggle1'
 import SimpleReactFileUpload from "./SimpleReactFileUpload";
 // import FileUpload from './FileUpload'
@@ -329,7 +332,14 @@ export default class MannirCam extends React.Component {
         formats: [ "ogg", "mp3", "aac" ]
     });
     
-    this.playSound();
+    // this.playSound();
+    var context = new (window.AudioContext || window.webkitAudioContext)();
+var osc = context.createOscillator(); // instantiate an oscillator
+osc.type = 'sine'; // this is the default - also square, sawtooth, triangle
+osc.frequency.value = 440; // Hz
+osc.connect(context.destination); // connect it to the destination
+osc.start(); // start the oscillator
+osc.stop(context.currentTime + 2); // stop 2 seconds after the current time
 
     // o.start(0)
 
@@ -365,8 +375,8 @@ export default class MannirCam extends React.Component {
     return (
       <div style={styles}>
         <h2>Mannir Cam</h2>
-        <div id="timer"></div>
-
+        <div id="log"></div>
+        
         <Paper style={p1} elevation={3}>
           <Typography variant="h5" component="h3">
             Camera Preview
