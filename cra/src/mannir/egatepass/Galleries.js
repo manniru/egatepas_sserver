@@ -28,7 +28,9 @@ const styles = theme => ({
   },
   gridList: {
     width: 700,
-    height: 450,
+    height: 500,
+    transform: 'translateZ(0)',
+
   },
   icon: {
     color: 'rgba(255, 255, 255, 0.54)',
@@ -43,8 +45,8 @@ function Galleries(props) {
   return (
     <div className={classes.root}>
     <Paper style={p1} elevation={3}>
-      <GridList cellHeight={180} className={classes.gridList}>
-        <GridListTile key="Subheader" cols={2} style={{ height: 'auto' }}>
+      <GridList cellHeight={180} className={classes.gridList} spacing={1}>
+        <GridListTile key="Subheader" cols={1} rows={1} style={{ height: 'auto' }}>
           <ListSubheader component="div">Febuary</ListSubheader>
         </GridListTile>
         {

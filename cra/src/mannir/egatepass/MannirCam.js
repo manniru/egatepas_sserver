@@ -17,6 +17,13 @@ import SpeakerPhone from "@material-ui/icons/SpeakerPhone";
 import "console-log-div";
 
 import fb from "../fb";
+import { countTransactionSum } from "./utils";
+
+
+let updateLocalStorage = _this => {
+  let transactions = JSON.stringify(_this.state.transactions);
+  localStorage.setItem("transactions", transactions);
+};
 
 function dataURItoBlob(dataURI) {
   var byteString = atob(dataURI.split(",")[1]);
@@ -69,7 +76,54 @@ export default class MannirCam extends React.Component {
     webcamEnabled: false,
     alignment: "left",
     formats: [],
-    preview: ""
+    preview: "",
+
+    total: 0,
+      openDialog: false,
+      operation: "outcome",
+      category: "0001",
+      entry: "",
+      transactions: [],
+      errorText: ""
+  };
+
+  componentDidMount = () => {
+    let localTransactions = JSON.parse(localStorage.getItem("transactions"));
+    if (localTransactions) {
+      this.setState({
+        transactions: localTransactions,
+        total: countTransactionSum(localTransactions)
+      });
+    }
+  }
+
+  componentDidUpdate = () => {
+    updateLocalStorage(this);
+  }
+
+  handleSubmitAddTransactionDialog = () => {
+    if (this.state.entry !== "0" && this.state.entry !== "") {
+      let array = this.state.transactions;
+      array.push({
+        operation: this.state.operation,
+        entry: this.state.entry,
+        date: Date.now(),
+        category: this.state.category
+      });
+
+      this.setState({
+        transactions: array,
+        entry: "",
+        total: countTransactionSum(array),
+        openDialog: false,
+        errorText: ""
+      });
+      updateLocalStorage(this);
+    } else {
+      this.setState({
+        errorText: "Enter a value"
+      });
+    }
   };
 
   enableWebcam = () => this.setState({ webcamEnabled: true });
@@ -106,7 +160,6 @@ export default class MannirCam extends React.Component {
         break;
 
       case "save":
-        console.log('save click')
         // this.readNfc();
         /*
         // generate file from base64 string
@@ -359,7 +412,7 @@ export default class MannirCam extends React.Component {
 
     if (navigator.nfc) {
       console.log("Waiting tag...");
-      this.playSound();
+      // this.playSound();
       navigator.nfc.watch(message => {
         for (let record of message.records) {
           // log(false, 'Record type:  ' + record.recordType);
@@ -469,6 +522,21 @@ export default class MannirCam extends React.Component {
 
           
 
+          
+
+          
+        </Paper>
+
+        <Button
+            variant="contained"
+            color="secondary"
+            style={b1}
+            onClick={e => this.handleClick(e, "save")}
+            // onClick={e => this.confirmphoto(e)}
+          >
+            Save
+          </Button>
+
           <Button
             variant="contained"
             color="primary"
@@ -483,23 +551,11 @@ export default class MannirCam extends React.Component {
           variant="contained"
           style={b1}
           //   onClick={e => this.handleClick(e, "camera")}
-          // onClick={this.beep}
           onClick={e => this.beep(e, "start")}
         >
           Beep
         </Button>
 
-        </Paper>
-
-        <Button
-            variant="contained"
-            color="secondary"
-            style={b1}
-            onClick={e => this.handleClick(e, "save")}
-            // onClick={e => this.confirmphoto(e)}
-          >
-            Save
-          </Button>
 
           <div id="log"></div>
 
