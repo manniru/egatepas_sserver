@@ -3,66 +3,32 @@ import React from "react";
 import Webcam from "react-webcam";
 import axios from "axios";
 import firebase from "firebase";
-import buzz from 'buzz';
+import buzz from "buzz";
 
 import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import ToggleButton from "@material-ui/lab/ToggleButton";
+import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 
-import CameraAlt from '@material-ui/icons/CameraAlt';
-import CameraRear from '@material-ui/icons/CameraRear';
-import SpeakerPhone from '@material-ui/icons/SpeakerPhone';
-// import console from '../console/console'
-import 'console-log-div';
-import '../console/console.css'
-// import Toggle1 from './Toggle1'
-import SimpleReactFileUpload from "./SimpleReactFileUpload";
-// import FileUpload from './FileUpload'
-
-// var config = {
-//   apiKey: "AIzaSyDWuN-cax6Byfo03cgK9S-yOicRHRaArok",
-//   authDomain: "egatepas.firebaseapp.com",
-//   databaseURL: "https://egatepas.firebaseio.com",
-//   projectId: "egatepas",
-//   storageBucket: "egatepas.appspot.com",
-//   messagingSenderId: "867652815500"
-// };
-// firebase.initializeApp(config);
-// // var storageRef = firebase.storage().ref();
+import CameraAlt from "@material-ui/icons/CameraAlt";
+import CameraRear from "@material-ui/icons/CameraRear";
+import SpeakerPhone from "@material-ui/icons/SpeakerPhone";
+import "console-log-div";
 
 import fb from "../fb";
-// var storage = fb.storage();
-// var storageRef = storage.ref();
-// var imagesRef = storageRef.child("images/");
-
-// var storageRef = fs.ref('/buk');
-// var storageRef = fb.storage();
 
 function dataURItoBlob(dataURI) {
-  // convert base64 to raw binary data held in a string
-  // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
   var byteString = atob(dataURI.split(",")[1]);
-
-  // separate out the mime component
   var mimeString = dataURI
     .split(",")[0]
     .split(":")[1]
     .split(";")[0];
-
-  // write the bytes of the string to an ArrayBuffer
   var ab = new ArrayBuffer(byteString.length);
-
-  // create a view into the buffer
   var ia = new Uint8Array(ab);
-
-  // set the bytes of the buffer to the correct values
   for (var i = 0; i < byteString.length; i++) {
     ia[i] = byteString.charCodeAt(i);
   }
-
-  // write the ArrayBuffer to a blob, and you're done
   var blob = new Blob([ab], { type: mimeString });
   return blob;
 }
@@ -84,8 +50,8 @@ const b1 = { margin: 5 };
 const p1 = {
   margin: 5,
   padding: 5,
-  width: 300,
-  height: 400,
+  width: 400,
+  height: 600,
   textAlign: "center"
 };
 
@@ -95,17 +61,16 @@ const styles = {
 };
 
 export default class MannirCam extends React.Component {
+
   state = {
     image: "",
     file: "",
     blob: "",
     webcamEnabled: false,
-    alignment: 'left',
+    alignment: "left",
     formats: [],
-    preview: '',
+    preview: ""
   };
-
-
 
   enableWebcam = () => this.setState({ webcamEnabled: true });
 
@@ -141,6 +106,8 @@ export default class MannirCam extends React.Component {
         break;
 
       case "save":
+        console.log('save click')
+        // this.readNfc();
         /*
         // generate file from base64 string
         const file = dataURLtoFile(this.state.image, "picture.jpg");
@@ -208,14 +175,24 @@ export default class MannirCam extends React.Component {
             uploadTask.snapshot.ref
               .getDownloadURL()
               .then(function(downloadURL) {
-
-                fb.database().ref(`images`).push({ downloadURL: downloadURL, filename: filename, title: filename, author: 'Security Officer' }).then(() => {
-                  // authStateChanged({ email: values.email });
-                  console.log('Firebase Updated!')
-                  }, e => {
-                  //authError(e)
-                  console.log(e)
-                  });
+                fb.database()
+                  .ref(`images`)
+                  .push({
+                    downloadURL: downloadURL,
+                    filename: filename,
+                    title: filename,
+                    author: "Security Officer"
+                  })
+                  .then(
+                    () => {
+                      // authStateChanged({ email: values.email });
+                      console.log("Firebase Updated!");
+                    },
+                    e => {
+                      //authError(e)
+                      console.log(e);
+                    }
+                  );
 
                 console.log("File available at", downloadURL);
               });
@@ -271,6 +248,10 @@ export default class MannirCam extends React.Component {
         );
         console.log("send3");
         break;
+
+      case "nfc":
+        this.readNfc();
+        break;
       default:
         break;
     }
@@ -321,92 +302,170 @@ export default class MannirCam extends React.Component {
     // o.connect(g)
     // g.connect(context.destination)
 
-    
-  
-
     switch (id) {
       case "start":
-      // var mySound = new buzz.sound("./buzz.mp3");
-      // buzz.all().play();
-      var sound = new buzz.sound("./buzz.mp3", {
-        formats: [ "ogg", "mp3", "aac" ]
-    });
-    
-    // this.playSound();
-    var context = new (window.AudioContext || window.webkitAudioContext)();
-var osc = context.createOscillator(); // instantiate an oscillator
-osc.type = 'sine'; // this is the default - also square, sawtooth, triangle
-osc.frequency.value = 440; // Hz
-osc.connect(context.destination); // connect it to the destination
-osc.start(); // start the oscillator
-osc.stop(context.currentTime + 2); // stop 2 seconds after the current time
+        // var mySound = new buzz.sound("./buzz.mp3");
+        // buzz.all().play();
+        var sound = new buzz.sound("./buzz.mp3", {
+          formats: ["ogg", "mp3", "aac"]
+        });
 
-    // o.start(0)
+        this.playSound();
+        
 
-      console.log('start')
+        // o.start(0)
+
+        console.log("start");
         break;
 
       case "stop":
+        // g.gain.exponentialRampToValueAtTime(
+        //   0.00001, context.currentTime + 0.04
+        // )
 
-      // g.gain.exponentialRampToValueAtTime(
-      //   0.00001, context.currentTime + 0.04
-      // )
-        
-        console.log('stop')
+        console.log("stop");
         break;
     }
   }
 
-  playSound = () => { var mySound = new buzz.sound( "/Users/mannir/GitHub/egatepass/cra/src/mannir/egatepass/buzz.mp3 ", { formats: [ "ogg", "mp3", "acc" ] }); mySound.play() }
+  playSound1 = () => {
+    var mySound = new buzz.sound(
+      "/Users/mannir/GitHub/egatepass/cra/src/mannir/egatepass/buzz.mp3 ",
+      { formats: ["ogg", "mp3", "acc"] }
+    );
+    mySound.play();
+  };
 
-  handleFormat = (event, formats) => this.setState({ formats });
+  playSound = () => {
+    var context = new (window.AudioContext || window.webkitAudioContext)();
+    var osc = context.createOscillator();
+    osc.type = "sine"; // this is the default - also square, sawtooth, triangle
+    osc.frequency.value = 440; // Hz
+    osc.connect(context.destination);
+    osc.start();
+    osc.stop(context.currentTime + 5);
+  }
+
+  handleFormat = (e, formats) => {
+    console.log(formats)
+
+    this.setState({ formats })
+  }
 
   handleAlignment = (event, alignment) => this.setState({ alignment });
 
-  render() {
+  readNfc = () => {
+    // const { firebaseApp } = this.props;
 
-    const { alignment, formats } = this.state;
-    // console.log(images)
+    if (navigator.nfc) {
+      console.log("Waiting tag...");
+      this.playSound();
+      navigator.nfc.watch(message => {
+        for (let record of message.records) {
+          // log(false, 'Record type:  ' + record.recordType);
+          // log(false, 'MIME type:    ' + record.mediaType);
+          // log(false, '=== data ===\n' + record.data);
+          // fb.database().ref(`nfc/read/${+ new Date()}`).set(JSON.parse(record.data))
+          // fb.database().ref(`nfc/read`).push(JSON.parse(record.data))
 
-    if (formats['preview']) {
-      console.log('Camera On')
+          var tm = +new Date();
+          fb.database()
+            .ref(`access/${tm}`)
+            .set({
+              // image: this.state.screenshot,
+              userId: "1",
+              deviceId: "2",
+              // tagId: JSON.parse(record.data),
+              locationId: "3",
+              time: tm
+            });
+
+          console.log("13131", record.data);
+        }
+      });
+    } else {
+      console.log(
+        "It looks like your browser and/or device does not support web NFC."
+      );
     }
+  };
+
+  render() {
+    const { alignment, formats } = this.state;
+
+    const videoConstraints = {
+      // facingMode: { exact: "environment" }
+      facingMode: "user"
+    };
+
+    // let videoConstraints;
+
+    // if (formats.includes('back')) {
+    //   videoConstraints = {
+    //     facingMode: { exact: "environment" }
+    //   };
+    // }
+
+    // else {
+    //   videoConstraints = {
+    //     facingMode: "user"
+    //   };
+    // }
 
     return (
       <div style={styles}>
-        <h2>Mannir Cam</h2>
-        <div id="log"></div>
+        <h3>EGatePass System</h3>
+
+        {/* <Paper style={p1} elevation={3}>
+        <Typography variant="h5" component="h3">
+            Console
+          </Typography>
         
+        </Paper> */}
+
         <Paper style={p1} elevation={3}>
           <Typography variant="h5" component="h3">
             Camera Preview
           </Typography>
 
           <div>
-          <ToggleButtonGroup value={formats} onChange={this.handleFormat}>
+            <ToggleButtonGroup value={formats} onChange={this.handleFormat}>
               <ToggleButton value="preview">
                 <CameraAlt />
               </ToggleButton>
-              <ToggleButton value="italic">
+              <ToggleButton value="back">
                 <CameraRear />
               </ToggleButton>
-              <ToggleButton value="underlined">
+              <ToggleButton value="nfc">
                 <SpeakerPhone />
               </ToggleButton>
             </ToggleButtonGroup>
           </div>
 
-          {
-            (formats.length>0) ?
-<Webcam
-            audio={false}
-            height={250}
-            width={250}
-            screenshotFormat={"image/jpeg"}
-            ref={this.setRef}
-          /> :
-          <h3>Camera is Off</h3>
-          }
+          { formats.includes('preview') ? (
+            <Webcam
+              audio={false}
+              height={250}
+              width={250}
+              screenshotFormat={"image/jpeg"}
+              ref={this.setRef}
+              videoConstraints={videoConstraints}
+            />
+          ) : (
+            <h3>Camera is Off</h3>
+          )}
+
+          <Button
+          disabled={!formats.includes('preview')}
+            variant="contained"
+            color="primary"
+            style={b1}
+            onClick={e => this.handleClick(e, "capture")}
+          >
+            Snap
+          </Button>
+
+          <img src={this.state.image} />
 
           
 
@@ -414,19 +473,25 @@ osc.stop(context.currentTime + 2); // stop 2 seconds after the current time
             variant="contained"
             color="primary"
             style={b1}
-            onClick={e => this.handleClick(e, "capture")}
+            onClick={e => this.handleClick(e, "nfc")}
+            // onClick={e => this.confirmphoto(e)}
           >
-            Capture
+            NFC
           </Button>
-        </Paper>
-
-        <Paper style={p1} elevation={3}>
-          <Typography variant="h5" component="h3">
-            Camera Captured
-          </Typography>
-          <img src={this.state.image} />
 
           <Button
+          variant="contained"
+          style={b1}
+          //   onClick={e => this.handleClick(e, "camera")}
+          // onClick={this.beep}
+          onClick={e => this.beep(e, "start")}
+        >
+          Beep
+        </Button>
+
+        </Paper>
+
+        <Button
             variant="contained"
             color="secondary"
             style={b1}
@@ -435,29 +500,9 @@ osc.stop(context.currentTime + 2); // stop 2 seconds after the current time
           >
             Save
           </Button>
-        </Paper>
 
-        {/* <Toggle1 /> */}
+          <div id="log"></div>
 
-        <Button
-          variant="contained"
-          style={b1}
-          //   onClick={e => this.handleClick(e, "camera")}
-          // onClick={this.beep}
-          onClick={e => this.beep(e, "start")}
-        >
-          Beep Start
-        </Button>
-
-        <Button
-          variant="contained"
-          style={b1}
-          //   onClick={e => this.handleClick(e, "camera")}
-          // onClick={this.beep_stop}
-          onClick={e => this.beep(e, "stop")}
-        >
-          Beep Stop
-        </Button>
 
         {/* 
         <Button
