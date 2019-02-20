@@ -26,35 +26,22 @@ const styles = theme => ({
   },
 });
 
-/**
- * The example data is structured as follows:
- *
- * import image from 'path/to/image.jpg';
- * [etc...]
- *
- * const tileData = [
- *   {
- *     img: image,
- *     title: 'Image',
- *     author: 'author',
- *   },
- *   {
- *     [etc...]
- *   },
- * ];
- */
+
 function Galleries(props) {
-  const { classes } = props;
+  const { classes, images } = props;
+  console.log(images)
 
   return (
     <div className={classes.root}>
       <GridList cellHeight={180} className={classes.gridList}>
         <GridListTile key="Subheader" cols={2} style={{ height: 'auto' }}>
-          <ListSubheader component="div">December</ListSubheader>
+          <ListSubheader component="div">Febuary</ListSubheader>
         </GridListTile>
-        {tileData.map(tile => (
-          <GridListTile key={tile.img}>
-            <img src={tile.img} alt={tile.title} />
+        {
+            (images.length>0) ?
+            images.map(tile => (
+          <GridListTile key={tile.downloadURL}>
+            <img src={tile.downloadURL} alt={tile.title} />
             <GridListTileBar
               title={tile.title}
               subtitle={<span>by: {tile.author}</span>}
@@ -65,7 +52,9 @@ function Galleries(props) {
               }
             />
           </GridListTile>
-        ))}
+        ))
+        : <h3>{'Loading...'}</h3>
+        }
       </GridList>
     </div>
   );

@@ -102,6 +102,8 @@ export default class MannirCam extends React.Component {
     preview: '',
   };
 
+
+
   enableWebcam = () => this.setState({ webcamEnabled: true });
 
   setRef = webcam => {
@@ -203,6 +205,15 @@ export default class MannirCam extends React.Component {
             uploadTask.snapshot.ref
               .getDownloadURL()
               .then(function(downloadURL) {
+
+                fb.database().ref(`images`).push({ downloadURL: downloadURL, filename: filename, title: filename, author: 'Security Officer' }).then(() => {
+                  // authStateChanged({ email: values.email });
+                  console.log('Firebase Updated!')
+                  }, e => {
+                  //authError(e)
+                  console.log(e)
+                  });
+
                 console.log("File available at", downloadURL);
               });
           }
@@ -345,7 +356,7 @@ export default class MannirCam extends React.Component {
   render() {
 
     const { alignment, formats } = this.state;
-    // console.log(alignment, formats)
+    // console.log(images)
 
     if (formats['preview']) {
       console.log('Camera On')
