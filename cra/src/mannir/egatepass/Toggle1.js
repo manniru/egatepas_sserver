@@ -15,6 +15,11 @@ import Grid from '@material-ui/core/Grid';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 
+import CameraAlt from '@material-ui/icons/CameraAlt';
+import CameraRear from '@material-ui/icons/CameraRear';
+import SpeakerPhone from '@material-ui/icons/SpeakerPhone';
+
+
 const styles = theme => ({
   toggleContainer: {
     height: 56,
@@ -31,6 +36,7 @@ class ToggleButtons extends React.Component {
   state = {
     alignment: 'left',
     formats: ['bold'],
+    preview: '',
   };
 
   handleFormat = (event, formats) => this.setState({ formats });
@@ -38,64 +44,27 @@ class ToggleButtons extends React.Component {
   handleAlignment = (event, alignment) => this.setState({ alignment });
 
   render() {
+
     const { classes } = this.props;
     const { alignment, formats } = this.state;
 
+    console.log(alignment, formats)
+
     return (
-      <Grid container spacing={16}>
-        <Grid item xs={12} sm={6}>
-          <div className={classes.toggleContainer}>
-            <ToggleButtonGroup value={alignment} exclusive onChange={this.handleAlignment}>
-              <ToggleButton value="left">
-                <FormatAlignLeftIcon />
-              </ToggleButton>
-              <ToggleButton value="center">
-                <FormatAlignCenterIcon />
-              </ToggleButton>
-              <ToggleButton value="right">
-                <FormatAlignRightIcon />
-              </ToggleButton>
-              <ToggleButton value="justify" disabled>
-                <FormatAlignJustifyIcon />
-              </ToggleButton>
-            </ToggleButtonGroup>
-          </div>
-          <Typography variant="caption" gutterBottom>
-            Exclusive Selection
-          </Typography>
-          <Typography variant="caption">
-            Text justification toggle buttons present options for left, right, center, full, and
-            justified text with only one item available for selection at a time. Selecting one
-            option deselects any other.
-          </Typography>
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <div className={classes.toggleContainer}>
+      <div className={classes.toggleContainer}>
             <ToggleButtonGroup value={formats} onChange={this.handleFormat}>
               <ToggleButton value="bold">
-                <FormatBoldIcon />
+                <CameraAlt />
               </ToggleButton>
               <ToggleButton value="italic">
-                <FormatItalicIcon />
+                <CameraRear />
               </ToggleButton>
               <ToggleButton value="underlined">
-                <FormatUnderlinedIcon />
-              </ToggleButton>
-              <ToggleButton disabled value="color">
-                <FormatColorFillIcon />
-                <ArrowDropDownIcon />
+                <SpeakerPhone />
               </ToggleButton>
             </ToggleButtonGroup>
           </div>
-          <Typography variant="caption" gutterBottom>
-            Multiple Selection
-          </Typography>
-          <Typography variant="caption">
-            Logically-grouped options, like Bold, Italic, and Underline, allow multiple options to
-            be selected.
-          </Typography>
-        </Grid>
-      </Grid>
+        
     );
   }
 }

@@ -48,8 +48,7 @@ app.use(fileUpload({
 
 app.use('/api/users', require('./users'));
 app.use('/uploads', require('./uploads'));
-
-// app.use('/upload', require('./testing/upload'));
+app.use('/firebasestore', require('./testing/firebasestore'));
 // app.use('/uploads1', require('./testing/uploads1'));
 // app.use('/images', require('./testing/images'));
 app.use('/cloudinary1', require('./testing/cloudinary1'));

@@ -5,7 +5,7 @@ import './index.css';
 // import App from './mannir/buk/BUKApp';
 // import App from './mannir/egatepass/WebcamCapture';
 // import App from './mannir/egatepass/Webcam';
-import App from './mannir/egatepass/MannirCam';
+import App from './mannir/egatepass/App';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(<App />, document.getElementById('root'));

@@ -9,5 +9,7 @@ var config = {
     messagingSenderId: "867652815500"
   };
 var fb = firebase.initializeApp(config);
+
+// const st = firebase.storage();
  
 export default fb;
