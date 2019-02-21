@@ -3,6 +3,7 @@ import React from "react";
 import Webcam from "react-webcam";
 import axios from "axios";
 import firebase from "firebase";
+import faker from 'faker';
 import buzz from "buzz";
 
 import Button from "@material-ui/core/Button";
@@ -16,14 +17,22 @@ import CameraRear from "@material-ui/icons/CameraRear";
 import SpeakerPhone from "@material-ui/icons/SpeakerPhone";
 import "console-log-div";
 
-import fb from "../fb";
+import { fb, db } from "../fb";
 import { countTransactionSum } from "./utils";
 
+// let updateLocalStorage = _this => {
+//   let data = JSON.stringify(_this.state.data);
+//   localStorage.setItem("data", data);
 
-let updateLocalStorage = _this => {
-  let transactions = JSON.stringify(_this.state.transactions);
-  localStorage.setItem("transactions", transactions);
-};
+//   /*
+//   fb.database()
+//     .ref("access")
+//     .set(_this.state.access)
+//     .then(() => {
+//       console.log("Record Saved! in Firebase");
+//     });
+//     */
+// };
 
 function dataURItoBlob(dataURI) {
   var byteString = atob(dataURI.split(",")[1]);
@@ -68,7 +77,6 @@ const styles = {
 };
 
 export default class MannirCam extends React.Component {
-
   state = {
     image: "",
     file: "",
@@ -79,52 +87,22 @@ export default class MannirCam extends React.Component {
     preview: "",
 
     total: 0,
-      openDialog: false,
-      operation: "outcome",
-      category: "0001",
-      entry: "",
-      transactions: [],
-      errorText: ""
+    openDialog: false,
+    operation: "outcome",
+    category: "0001",
+    entry: "",
+    transactions: [],
+    errorText: "",
+    files: []
   };
 
-  componentDidMount = () => {
-    let localTransactions = JSON.parse(localStorage.getItem("transactions"));
-    if (localTransactions) {
-      this.setState({
-        transactions: localTransactions,
-        total: countTransactionSum(localTransactions)
-      });
-    }
-  }
+  // componentDidMount = () => {
 
-  componentDidUpdate = () => {
-    updateLocalStorage(this);
-  }
+  // };
 
-  handleSubmitAddTransactionDialog = () => {
-    if (this.state.entry !== "0" && this.state.entry !== "") {
-      let array = this.state.transactions;
-      array.push({
-        operation: this.state.operation,
-        entry: this.state.entry,
-        date: Date.now(),
-        category: this.state.category
-      });
-
-      this.setState({
-        transactions: array,
-        entry: "",
-        total: countTransactionSum(array),
-        openDialog: false,
-        errorText: ""
-      });
-      updateLocalStorage(this);
-    } else {
-      this.setState({
-        errorText: "Enter a value"
-      });
-    }
-  };
+  // componentDidUpdate = () => {
+  //   updateLocalStorage(this);
+  // };
 
   enableWebcam = () => this.setState({ webcamEnabled: true });
 
@@ -160,6 +138,8 @@ export default class MannirCam extends React.Component {
         break;
 
       case "save":
+        // SAVE TO LOCALSTORAGE
+
         // this.readNfc();
         /*
         // generate file from base64 string
@@ -260,6 +240,64 @@ export default class MannirCam extends React.Component {
           .then(response => {
             console.log(response.data);
           });
+
+        //
+
+        console.log("Firestore here!");
+        /*
+        db.collection("files")
+          .doc(tm+"")
+          .set({
+            userId: "userId",
+            deviceId: "deviceId",
+            time: tm,
+            dataURI: this.state.image
+          })
+          .then(function(docRef) {
+            console.log("Document written with ID: ", docRef.id);
+          })
+          .catch(function(error) {
+            console.error("Error writing document: ", error);
+          });
+          */
+         const time = +new Date();
+         var firstName = faker.name.firstName(); 
+         var lastName = faker.name.lastName(); 
+         var createCard = faker.helpers.createCard()
+
+         
+          
+
+          var data = {
+            firstName,
+            lastName,
+            createCard,
+            time,
+            dataURI: this.state.image
+          }
+
+          /*
+          db.collection("files")
+          // .doc(time+"")
+          .add(data)
+          .then(function(docRef) {
+            console.log("Document written with ID: ", docRef.id);
+          })
+          .catch(function(error) {
+            console.error("Error adding document: ", error);
+          });
+          */
+
+          
+          db.collection("access").doc(time+"").set(data)
+        .then(function() {
+          console.log("Document written ");
+        })
+        .catch(function(error) {
+            console.error("Error writing document: ", error);
+        });
+        
+        
 
         console.log("Sent to Server");
         break;
@@ -364,7 +402,6 @@ export default class MannirCam extends React.Component {
         });
 
         this.playSound();
-        
 
         // o.start(0)
 
@@ -397,13 +434,13 @@ export default class MannirCam extends React.Component {
     osc.connect(context.destination);
     osc.start();
     osc.stop(context.currentTime + 5);
-  }
+  };
 
   handleFormat = (e, formats) => {
-    console.log(formats)
+    console.log(formats);
 
-    this.setState({ formats })
-  }
+    this.setState({ formats });
+  };
 
   handleAlignment = (event, alignment) => this.setState({ alignment });
 
@@ -441,6 +478,22 @@ export default class MannirCam extends React.Component {
         "It looks like your browser and/or device does not support web NFC."
       );
     }
+  };
+
+  handleClickLocal = e => {
+    let array = this.state.files;
+    array.push({
+      time: +new Date(),
+      image: this.state.image
+    });
+
+    this.setState({
+      files: array,
+      entry: ""
+      // total: countTransactionSum(array),
+    });
+
+    // this.props.updateLocalStorage(this);
   };
 
   render() {
@@ -495,7 +548,7 @@ export default class MannirCam extends React.Component {
             </ToggleButtonGroup>
           </div>
 
-          { formats.includes('preview') ? (
+          {formats.includes("preview") ? (
             <Webcam
               audio={false}
               height={250}
@@ -509,7 +562,7 @@ export default class MannirCam extends React.Component {
           )}
 
           <Button
-          disabled={!formats.includes('preview')}
+            disabled={!formats.includes("preview")}
             variant="contained"
             color="primary"
             style={b1}
@@ -519,35 +572,37 @@ export default class MannirCam extends React.Component {
           </Button>
 
           <img src={this.state.image} />
-
-          
-
-          
-
-          
         </Paper>
 
         <Button
-            variant="contained"
-            color="secondary"
-            style={b1}
-            onClick={e => this.handleClick(e, "save")}
-            // onClick={e => this.confirmphoto(e)}
-          >
-            Save
-          </Button>
+          variant="contained"
+          color="secondary"
+          style={b1}
+          onClick={e => this.handleClick(e, "save")}
+        >
+          Save
+        </Button>
 
-          <Button
-            variant="contained"
-            color="primary"
-            style={b1}
-            onClick={e => this.handleClick(e, "nfc")}
-            // onClick={e => this.confirmphoto(e)}
-          >
-            NFC
-          </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          style={b1}
+          onClick={e => this.handleClickLocal(e)}
+        >
+          Local
+        </Button>
 
-          <Button
+        <Button
+          variant="contained"
+          color="primary"
+          style={b1}
+          onClick={e => this.handleClick(e, "nfc")}
+          // onClick={e => this.confirmphoto(e)}
+        >
+          NFC
+        </Button>
+
+        <Button
           variant="contained"
           style={b1}
           //   onClick={e => this.handleClick(e, "camera")}
@@ -556,9 +611,7 @@ export default class MannirCam extends React.Component {
           Beep
         </Button>
 
-
-          <div id="log"></div>
-
+        <div id="log" />
 
         {/* 
         <Button

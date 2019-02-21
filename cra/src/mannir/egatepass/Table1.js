@@ -63,7 +63,7 @@ class EnhancedTableHead extends React.Component {
   };
 
   render() {
-    const { onSelectAllClick, order, orderBy, numSelected, rowCount } = this.props;
+    const { onSelectAllClick, order, orderBy, numSelected, rowCount, access } = this.props;
 
     return (
       <TableHead>
@@ -275,9 +275,12 @@ class Table1 extends React.Component {
   isSelected = id => this.state.selected.indexOf(id) !== -1;
 
   render() {
-    const { classes } = this.props;
-    const { data, order, orderBy, selected, rowsPerPage, page } = this.state;
+    const { classes, access } = this.props;
+    const data = access;
+    const { order, orderBy, selected, rowsPerPage, page } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
+
+    console.log(access)
 
     return (
       <Paper className={classes.root}>
@@ -311,11 +314,11 @@ class Table1 extends React.Component {
                         <Checkbox checked={isSelected} />
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
-                        {n.name}
+                        {n.time}
                       </TableCell>
-                      <TableCell align="right">{n.calories}</TableCell>
-                      <TableCell align="right">{n.fat}</TableCell>
-                      <TableCell align="right">{n.carbs}</TableCell>
+                      <TableCell align="right">{n.userId}</TableCell>
+                      <TableCell align="right">{n.deviceId}</TableCell>
+                      <TableCell align="right">{n.tagId}</TableCell>
                       <TableCell align="right">{n.protein}</TableCell>
                     </TableRow>
                   );

@@ -25,6 +25,8 @@ import { countTransactionSum } from "./utils";
 import AddCircle from "@material-ui/icons/AddCircle";
 import RemoveCircle from "@material-ui/icons/RemoveCircle";
 import ClearAll from "@material-ui/icons/ClearAll";
+import Sync from "@material-ui/icons/Sync";
+import CloudUpload from "@material-ui/icons/CloudUpload";
 
 import InputBase from "@material-ui/core/InputBase";
 import Badge from "@material-ui/core/Badge";
@@ -36,29 +38,23 @@ import MoreIcon from "@material-ui/icons/MoreVert";
 
 import MannirCam from "./MannirCam";
 import Galleries from "./Galleries";
-import fb from "../fb";
-import data from './data'
+import firebase from "firebase";
+import { fb, db } from "../fb";
+import data from "./data";
 import Dashboard from "./Dashboard";
 import Images from "./Images";
-import faker from 'faker';
+import faker from "faker";
+// import addFS from '../db/firestore'
 
-let updateLocalStorage = _this => {
-  let data = JSON.stringify(_this.state.data);
-  localStorage.setItem("data", data);
-
-  fb.database().ref("access").set(_this.state.data).then(() => { console.log("Record Saved! in Firebase"); });
-
-};
-
-const randHex = (len) => {
+const randHex = len => {
   var n, r, min, max;
   var maxlen = 8,
-      min = Math.pow(16,Math.min(len,maxlen)-1) 
-      max = Math.pow(16,Math.min(len,maxlen)) - 1,
-      n   = Math.floor( Math.random() * (max-min+1) ) + min,
-      r   = n.toString(16);
-  while ( r.length < len ) {
-     r = r + randHex( len - maxlen );
+    min = Math.pow(16, Math.min(len, maxlen) - 1);
+  (max = Math.pow(16, Math.min(len, maxlen)) - 1),
+    (n = Math.floor(Math.random() * (max - min + 1)) + min),
+    (r = n.toString(16));
+  while (r.length < len) {
+    r = r + randHex(len - maxlen);
   }
   return r;
 };
@@ -187,34 +183,68 @@ const styles = theme => ({
   }
 });
 
-class Drawer1 extends React.Component {
+class App extends React.Component {
   state = {
     open: false,
     images: "",
     anchorEl: null,
     mobileMoreAnchorEl: null,
-    data: []
+    // data: [],
+    access: [],
+    connected: false,
+    files: [],
+    data: [],
+    total: ""
   };
 
   componentDidMount = () => {
-    fb.database()
-      .ref("images")
-      .on("value", snap => {
-        if (snap.val()) {
-          this.setState({ images: Object.values(snap.val()) });
-        }
+    //
+
+    var access = [];
+    
+    /*
+    db.collection("access")
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          console.log(`${doc.id} => ${doc.data()}`);
+          access.push(doc.data())
+          // access[doc.id] = doc.data();
+        });
+        this.setState({access: access})
       });
+      */
 
-    let localTransactions = JSON.parse(localStorage.getItem("data"));
-    if (localTransactions) {
-      this.setState({
-        data: localTransactions
-      });
-    }
+      db.collection("access")//.doc("SF")
+    .onSnapshot(querySnapshot => {
+        var source = querySnapshot.metadata.hasPendingWrites ? "Local" : "Server";
+        console.log(source, " data: "); //, doc.data()
+        querySnapshot.forEach(doc => {
+          console.log(`${doc.id} => ${doc.data()}`);
+          // console.log(doc.data())
+          access.push(doc.data())
+          // access[doc.id] = doc.data();
+        });
 
-    // fb.database().ref('/demos/products').on('value', snap => { if (snap.val()) { this.setState({ products: Object.values(snap.val()) }); } });
+        // console.log(access)
+        this.setState({access: access})
 
+    });
+
+
+     /*
+     db.collection("files").doc("1550733479095")
+    .onSnapshot(function(doc) {
+        var source = doc.metadata.hasPendingWrites ? "Local" : "Server";
+        console.log(source, " data: ", doc.data());
+    });
+    */
+  
   };
+
+  // componentDidUpdate = () => {
+  //   updateLocalStorage(this);
+  // };
 
   handleDrawerOpen = () => {
     this.setState({ open: true });
@@ -244,38 +274,138 @@ class Drawer1 extends React.Component {
   handleClickTest = (e, id) => {
     switch (id) {
       case "add":
-        const tm = +new Date()
-        // const uuid = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-        // var deviceId = (function lol(m,s,c){return s[m.floor(m.random() * s.length)] + (c && lol(m,s,c-1));})(Math,'0123456789ABCDEF',4)
-        // var tagId = (function(m,s,c){return (c ? arguments.callee(m,s,c-1) : '#') + s[m.floor(m.random() * s.length)]})(Math,'0123456789ABCDEF',5)
-        // var userId = Math.floor(Math.random()*16777215).toString(16);
-        var access = {
-          userId: randHex(28), // faker.random.objectElement(data.users).userId,
-          deviceId: randHex(16),
-          tagId: randHex(8),
-          location: faker.random.arrayElement(['newsite', 'oldsite']),
-          latitude: faker.address.latitude(),
-          longitude: faker.address.longitude(),
-          time: tm,
-          fileId: '1550659773372.jpg',
-          image: faker.image.transport(),
-          type: faker.random.arrayElement(['in', 'out']),
+        // https://firebase.google.com/docs/firestore/manage-data/enable-offline
+        // https://firebase.google.com/docs/firestore/manage-data/add-data
+        // https://firebase.google.com/docs/firestore/query-data/get-data
+        // https://firebase.google.com/docs/firestore/query-data/listen
+        /*
+      let array = this.state.data;
 
-        }
-        let array = this.state.data;
-        array.push(access);
+      const tm = +new Date();
 
-        this.setState({
-          data: array,
-          openDialog: false,
-          total: countTransactionSum([])
-        });
+      var data = {
+        userId: randHex(28), // faker.random.objectElement(data.users).userId,
+        deviceId: randHex(16),
+        tagId: randHex(8),
+        location: faker.random.arrayElement(["newsite", "oldsite"]),
+        latitude: faker.address.latitude(),
+        longitude: faker.address.longitude(),
+        time: tm,
+        fileId: "1550659773372.jpg",
+        image: faker.image.transport(),
+        type: faker.random.arrayElement(["in", "out"])
+      };
 
-        updateLocalStorage(this);
+      array.push(data);
+      this.setState({
+        data: array,
+        // total: countTransactionSum(array)
+      });
+      
+      updateLocalStorage(this);
+      */
+
+        db.collection("users")
+          .add({
+            first: "Aysha",
+            last: "Mannir",
+            born: 2017
+          })
+          .then(function(docRef) {
+            console.log("Document written with ID: ", docRef.id);
+          })
+          .catch(function(error) {
+            console.error("Error adding document: ", error);
+          });
+
+        db.collection("users")
+          .add({
+            first: "Ahmad",
+            middle: "Mannir",
+            last: "Ahmad",
+            born: 2019
+          })
+          .then(function(docRef) {
+            console.log("Document written with ID: ", docRef.id);
+          })
+          .catch(function(error) {
+            console.error("Error adding document: ", error);
+          });
+
+        db.collection("cities")
+          .doc("LA")
+          .set({
+            name: "Los Angeles",
+            state: "CA",
+            country: "USA"
+          })
+          .then(function() {
+            console.log("Document successfully written!");
+          })
+          .catch(function(error) {
+            console.error("Error writing document: ", error);
+          });
+
+        var cityRef = db.collection("cities").doc("BJ");
+
+        var setWithMerge = cityRef.set(
+          {
+            capital: true
+          },
+          { merge: true }
+        );
+
+        var docData = {
+          stringExample: "Hello world!",
+          booleanExample: true,
+          numberExample: 3.14159265,
+          dateExample: firebase.firestore.Timestamp.fromDate(
+            new Date("December 10, 1815")
+          ),
+          arrayExample: [5, true, "hello"],
+          nullExample: null,
+          objectExample: {
+            a: 5,
+            b: {
+              nested: "foo"
+            }
+          }
+        };
+        db.collection("data")
+          .doc("one")
+          .set(docData)
+          .then(function() {
+            console.log("Document successfully written!");
+          });
+
+        db.collection("data")
+          .doc("one")
+          .set({ foo: "bar" });
+        //db.collection("cities").doc("new-city-id").set(data);
+        db.collection("cities")
+          .add({
+            name: "Tokyo",
+            country: "Japan"
+          })
+          .then(function(docRef) {
+            console.log("Document written with ID: ", docRef.id);
+          })
+          .catch(function(error) {
+            console.error("Error adding document: ", error);
+          });
+
+        console.log("Added!");
 
         break;
-
       case "remove":
+        db.collection("users")
+          .get()
+          .then(querySnapshot => {
+            querySnapshot.forEach(doc => {
+              console.log(`${doc.id} => ${doc.data()}`);
+            });
+          });
+        /*
         // let array = this.state.data.filter(item => item !== deletedItem);
         var arr = this.state.data;
         arr.splice(-1, 1);
@@ -285,29 +415,34 @@ class Drawer1 extends React.Component {
           total: countTransactionSum(arr)
         });
         updateLocalStorage(this);
+        */
         break;
-
       case "clear":
-        // let array = this.state.transactions.filter(item => item !== deletedItem);
         this.setState({
-          data: [],
+          dta: [],
           total: countTransactionSum([])
         });
-        updateLocalStorage(this);
+        // updateLocalStorage(this);
+        console.log("Cleared!");
+        break;
+      case "sync":
+        break;
+      case "cloud":
         break;
 
       default:
         break;
     }
-
-    // let dt = JSON.parse(localStorage.getItem("images"));
-
-    console.log("Saved");
   };
 
   render() {
     const { classes, theme } = this.props;
-    const { open, images } = this.state;
+    const { open, images, access, files, data, total } = this.state;
+    // access = Object.values(access)
+    console.log('access: ', access)
+
+    let acccess_count;
+    if (access.length > 0) acccess_count = access.length;
 
     const { anchorEl, mobileMoreAnchorEl } = this.state;
     const isMenuOpen = Boolean(anchorEl);
@@ -373,6 +508,22 @@ class Drawer1 extends React.Component {
                 <ClearAll />
               </IconButton>
 
+              <IconButton
+                aria-haspopup="true"
+                onClick={e => this.handleClickTest(e, "sync")}
+                color="inherit"
+              >
+                <Sync />
+              </IconButton>
+
+              <IconButton
+                aria-haspopup="true"
+                onClick={e => this.handleClickTest(e, "cloud")}
+                color="inherit"
+              >
+                <CloudUpload />
+              </IconButton>
+
               <div className={classes.grow} />
               <div className={classes.sectionDesktop}>
                 <IconButton color="inherit">
@@ -381,7 +532,7 @@ class Drawer1 extends React.Component {
                   </Badge>
                 </IconButton>
                 <IconButton color="inherit">
-                  <Badge badgeContent={17} color="secondary">
+                  <Badge badgeContent={acccess_count} color="secondary">
                     <NotificationsIcon />
                   </Badge>
                 </IconButton>
@@ -480,11 +631,42 @@ class Drawer1 extends React.Component {
             })}
           >
             <div className={classes.drawerHeader} />
-            {/* <Typography paragraph>Camera</Typography> */}
 
-            <Route exact path="/" component={MannirCam} />
-            <Route path="/dashboard" component={Dashboard} />
-            <Route path="/camera" component={MannirCam} />
+            <Route
+              exact
+              path="/"
+              render={props => (
+                <MannirCam
+                  {...props}
+                  images={images}
+                  access={access}
+                  files={files}
+                  // updateLocalStorage={this.updateLocalStorage}
+                />
+              )}
+            />
+
+            <Route
+              exact
+              path="/camera"
+              render={props => (
+                <MannirCam
+                  {...props}
+                  images={images}
+                  access={access}
+                  files={files}
+                  // updateLocalStorage={this.updateLocalStorage}
+                />
+              )}
+            />
+
+            <Route
+              exact
+              path="/dashboard"
+              render={props => (
+                <Dashboard {...props} images={images} access={access} />
+              )}
+            />
 
             <Route
               exact
@@ -507,9 +689,9 @@ class Drawer1 extends React.Component {
   }
 }
 
-Drawer1.propTypes = {
+App.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired
 };
 
-export default withStyles(styles, { withTheme: true })(Drawer1);
+export default withStyles(styles, { withTheme: true })(App);

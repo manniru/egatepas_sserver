@@ -13,6 +13,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Table1 from './Table1'
+import { fb, db } from "../fb";
 
 
 function TabContainer(props) {
@@ -34,7 +35,7 @@ function TabContainer(props) {
     };
   
     render() {
-      const { classes } = this.props;
+      const { classes, access } = this.props;
       const { value } = this.state;
   
       return (
@@ -50,11 +51,11 @@ function TabContainer(props) {
               <Tab label="Vehicles Out (Newsite)" />
             </Tabs>
           </AppBar>
-          {value === 0 && <TabContainer><Table1 /></TabContainer>}
-          {value === 1 && <TabContainer><Table1 /></TabContainer>}
-          {value === 2 && <TabContainer><Table1 /></TabContainer>}
-          {value === 3 && <TabContainer><Table1 /></TabContainer>}
-          {value === 4 && <TabContainer><Table1 /></TabContainer>}
+          {value === 0 && <TabContainer><Table1 access={access} /></TabContainer>}
+          {value === 1 && <TabContainer><Table1 access={access}  /></TabContainer>}
+          {value === 2 && <TabContainer><Table1 access={access}  /></TabContainer>}
+          {value === 3 && <TabContainer><Table1 access={access}  /></TabContainer>}
+          {value === 4 && <TabContainer><Table1  access={access} /></TabContainer>}
         </div>
         </Paper>
       );
@@ -99,20 +100,14 @@ const p4 = {
 
 };
 
-const styles = theme => ({
-  button: {
-    margin: theme.spacing.unit
-  },
-  input: {
-    display: "none"
-  }
-});
+export default class Dashboard extends React.Component {
 
-const Dashboard = props => {
-  const { classes } = props;
-  return (
-    <div>
-      <Grid container spacing={12}>
+  
+    render() {
+        const { access } = this.props;
+      return (
+        <div>
+      <Grid container spacing={16}>
         <Grid item xs={12}>
           <Grid container justify="center" spacing={16}>
             {/* {[0, 1, 2, 3].map(value => ( */}
@@ -203,13 +198,8 @@ const Dashboard = props => {
         </Grid>
       </Grid>
 
-      <Tabs1 />
+      <Tabs1 access={access} />
     </div>
-  );
-};
-
-Dashboard.propTypes = {
-  classes: PropTypes.object.isRequired
-};
-
-export default withStyles(styles)(Dashboard);
+      );
+    }
+  }
