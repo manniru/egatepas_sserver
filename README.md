@@ -1,1 +1,1 @@
-# Mannir eGatePass System API Server
+# Mannir eGatePass System
